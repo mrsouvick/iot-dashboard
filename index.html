@@ -1,106 +1,21 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ESP32 Climate Monitor</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Smart Climate Monitor</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
-<body class="bg-gradient-to-br from-gray-900 to-gray-800 text-white min-h-screen flex flex-col items-center justify-center p-4">
-
-  <div class="bg-gray-900 p-6 md:p-10 rounded-3xl shadow-2xl w-full max-w-2xl border border-gray-700 animate-fade-in">
-    <h1 class="text-4xl font-bold mb-4 text-center text-green-400">🌡️ ESP32 Climate Monitor</h1>
-
-    <div class="grid grid-cols-2 gap-4 text-center text-xl md:text-2xl mb-6">
-      <div class="bg-gray-800 p-4 rounded-xl">🌡️ Temp: <span id="temp">--</span> °C</div>
-      <div class="bg-gray-800 p-4 rounded-xl">💧 Hum: <span id="hum">--</span> %</div>
+<body>
+  <div class="container">
+    <h1>🌤 Smart Climate Monitor</h1>
+    <div class="card">
+      <h2>🌡 Temperature: <span id="temp">--</span>°C</h2>
+      <h2>💧 Humidity: <span id="hum">--</span>%</h2>
     </div>
-
-    <canvas id="climateChart" class="w-full h-64"></canvas>
-
-    <p class="mt-6 text-sm text-gray-400 text-center">📡 Powered by Firebase & ESP32</p>
   </div>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyC5YqlTsNv9ZRe01sw2yslyNPVlrJ9kUOI",
-      authDomain: "esp32-climatemonitor.firebaseapp.com",
-      databaseURL: "https://esp32-climatemonitor-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "esp32-climatemonitor",
-      storageBucket: "esp32-climatemonitor.appspot.com",
-      messagingSenderId: "YOUR_MSG_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database().ref("climate");
-
-    let tempData = [];
-    let humData = [];
-    let labels = [];
-
-    const ctx = document.getElementById('climateChart').getContext('2d');
-    const climateChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Temperature (°C)',
-          data: tempData,
-          backgroundColor: 'rgba(16, 185, 129, 0.2)',
-          borderColor: 'rgba(16, 185, 129, 1)',
-          borderWidth: 2,
-          tension: 0.4
-        },
-        {
-          label: 'Humidity (%)',
-          data: humData,
-          backgroundColor: 'rgba(59, 130, 246, 0.2)',
-          borderColor: 'rgba(59, 130, 246, 1)',
-          borderWidth: 2,
-          tension: 0.4
-        }]
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: true },
-          x: { ticks: { color: '#ccc' } }
-        }
-      }
-    });
-
-    db.on("value", (snapshot) => {
-      const data = snapshot.val();
-      const now = new Date().toLocaleTimeString();
-
-      document.getElementById("temp").innerText = data.temperature.toFixed(1);
-      document.getElementById("hum").innerText = data.humidity.toFixed(1);
-
-      // Push to graph data
-      if (labels.length > 10) {
-        labels.shift(); tempData.shift(); humData.shift();
-      }
-      labels.push(now);
-      tempData.push(data.temperature);
-      humData.push(data.humidity);
-
-      climateChart.update();
-    });
-  </script>
-
-  <style>
-    @keyframes fade-in {
-      0% { opacity: 0; transform: scale(0.95); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    .animate-fade-in {
-      animation: fade-in 0.8s ease-out;
-    }
-  </style>
-
+  <script src="script.js"></script>
 </body>
 </html>
