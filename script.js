@@ -15,9 +15,11 @@ const tempElement = document.getElementById("temp");
 const humElement = document.getElementById("hum");
 
 db.ref("sensor/temperature").on("value", (snapshot) => {
-  tempElement.innerText = snapshot.val().toFixed(2);
+  const val = snapshot.val();
+  tempElement.innerText = val !== null ? val.toFixed(2) : "--";
 });
 
 db.ref("sensor/humidity").on("value", (snapshot) => {
-  humElement.innerText = snapshot.val().toFixed(2);
+  const val = snapshot.val();
+  humElement.innerText = val !== null ? val.toFixed(2) : "--";
 });
